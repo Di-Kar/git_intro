@@ -1,0 +1,79 @@
+name: storage-bench
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8-alpine
+    container_name: bench_clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    environment:
+      CLICKHOUSE_DB: bench
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ""
+    volumes:
+      - ch_data:/var/lib/clickhouse
+      - ./schemas/clickhouse.sql:/docker-entrypoint-initdb.d/01_clickhouse.sql:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8123/ping || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: bench_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: bench
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    command: >
+      postgres
+      -c shared_buffers=1GB
+      -c effective_cache_size=3GB
+      -c work_mem=64MB
+      -c maintenance_work_mem=512MB
+      -c max_wal_size=4GB
+      -c checkpoint_timeout=15min
+      -c autovacuum=on
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./schemas/postgres_table.sql:/docker-entrypoint-initdb.d/01_table.sql:ro
+      - ./schemas/postgres_indexes.sql:/schemas/postgres_indexes.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bench"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  vertica:
+    # Если opentext/vertica-ce недоступен, попробуйте vertica/vertica-ce
+    image: opentext/vertica-ce:latest
+    container_name: bench_vertica
+    ports:
+      - "5433:5433"
+    environment:
+      VDB_PASSWORD: Vertica123
+      # Если ваша версия образа поддерживает VERTICA_DB_NAME, можно задать имя БД.
+      # Часто в Vertica CE docker по умолчанию используется база docker.
+      VERTICA_DB_NAME: docker
+    shm_size: 1g
+    volumes:
+      - vertica_data:/home/dbadmin/docker
+      - ./schemas/vertica.sql:/schemas/vertica.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/vertica/bin/vsql -U dbadmin -w Vertica123 -l >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 30
+
+volumes:
+  ch_data:
+  pg_data:
+  vertica_data:
