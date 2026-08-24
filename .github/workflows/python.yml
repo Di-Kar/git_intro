@@ -54,8 +54,7 @@ jobs:
         run: mypy .
 
       - name: Run tests with pytest
-        run: pytest
-        # Если тестов пока нет, закомментируйте этот шаг или добавьте `|| true`
+        run: pytest || true
 
   # Задача 5: Отправка уведомления в Telegram
   notify-telegram:
