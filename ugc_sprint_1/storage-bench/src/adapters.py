@@ -3,11 +3,13 @@ import random
 from decimal import Decimal
 
 import numpy as np
+from typing import Any, Union, Literal
+from clickhouse_driver import Client
 import psycopg2
 import psycopg2.extras
+from psycopg2.extensions import connection as PgConnection
 import vertica_python
-from clickhouse_driver import Client
-
+from vertica_python import Connection
 from config import CLICKHOUSE, POSTGRES_DSN, VERTICA
 
 EVENT_TYPES = ["view", "click", "purchase", "refund", "login"]
@@ -58,7 +60,7 @@ QUERY = {
 }
 
 
-def connect(db: str):
+def connect(db: Literal["clickhouse", "postgres", "vertica"]) -> Union[Client, PgConnection, Connection]:
     if db == "clickhouse":
         return Client(**CLICKHOUSE)
 
@@ -78,14 +80,13 @@ def connect(db: str):
     raise ValueError(f"Unsupported db: {db}")
 
 
-def fetch_all(conn, db: str):
+def fetch_all(conn: Any, db: Literal["clickhouse", "postgres", "vertica"]) -> list[tuple[Any, ...]]:
     if db == "clickhouse":
         return conn.execute(QUERY[db])
 
     cur = conn.cursor()
     cur.execute(QUERY[db])
     return cur.fetchall()
-
 
 def make_rows(n: int, seed: int | None = None):
     if seed is None:
@@ -121,9 +122,9 @@ def make_rows(n: int, seed: int | None = None):
         )
 
     return rows
+    
 
-
-def insert_rows(conn, db: str, rows):
+def insert_rows(conn: Any, db: str, rows) -> None:
     if not rows:
         return
 
