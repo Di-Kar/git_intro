@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--datadir", default="data/csv")
     parser.add_argument("--total", type=int, required=True)
