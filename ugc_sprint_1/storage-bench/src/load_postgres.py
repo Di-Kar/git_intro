@@ -27,7 +27,7 @@ def main() -> None:
     start = time.perf_counter()
 
     for file_path in files:
-        with open(file_path, "r", encoding="utf-8") as fh:
+        with open(file_path, encoding="utf-8") as fh:
             cur.copy_expert(
                 """
                 COPY bench.events (
