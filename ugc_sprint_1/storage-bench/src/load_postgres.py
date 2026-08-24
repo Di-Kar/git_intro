@@ -7,7 +7,7 @@ import psycopg2
 from config import POSTGRES_DSN
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--datadir", default="data/csv")
     parser.add_argument("--total", type=int, required=True)
