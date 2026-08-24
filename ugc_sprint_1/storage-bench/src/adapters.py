@@ -93,6 +93,7 @@ def fetch_all(
     cur.execute(QUERY[db])
     return cur.fetchall()
 
+
 def make_rows(n: int, seed: int | None = None):
     if seed is None:
         seed = random.SystemRandom().randint(0, 2**32 - 1)
