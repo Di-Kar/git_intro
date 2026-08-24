@@ -7,7 +7,7 @@ import vertica_python
 from config import VERTICA
 
 
-def main()-> None:
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--datadir", default="data/csv")
     parser.add_argument("--total", type=int, required=True)
@@ -26,7 +26,7 @@ def main()-> None:
     start = time.perf_counter()
 
     for file_path in files:
-        with open(file_path, "r", encoding="utf-8") as fh:
+        with open(file_path, encoding="utf-8") as fh:
             cur.copy(
                 """
                 COPY bench.events (

@@ -1,16 +1,16 @@
 import datetime
 import random
 from decimal import Decimal
+from typing import Any, Literal
 
 import numpy as np
-from typing import Any, Union, Literal
-from clickhouse_driver import Client
 import psycopg2
 import psycopg2.extras
-from psycopg2.extensions import connection as PgConnection
 import vertica_python
-from vertica_python import Connection
+from clickhouse_driver import Client
 from config import CLICKHOUSE, POSTGRES_DSN, VERTICA
+from psycopg2.extensions import connection as PgConnection
+from vertica_python import Connection
 
 EVENT_TYPES = ["view", "click", "purchase", "refund", "login"]
 CATEGORIES = ["electronics", "books", "clothing", "food", "travel"]
@@ -60,7 +60,9 @@ QUERY = {
 }
 
 
-def connect(db: Literal["clickhouse", "postgres", "vertica"]) -> Union[Client, PgConnection, Connection]:
+def connect(
+    db: Literal["clickhouse", "postgres", "vertica"],
+) -> Client | PgConnection | Connection:
     if db == "clickhouse":
         return Client(**CLICKHOUSE)
 
@@ -80,13 +82,17 @@ def connect(db: Literal["clickhouse", "postgres", "vertica"]) -> Union[Client, P
     raise ValueError(f"Unsupported db: {db}")
 
 
-def fetch_all(conn: Any, db: Literal["clickhouse", "postgres", "vertica"]) -> list[tuple[Any, ...]]:
+def fetch_all(
+    conn: Any,
+    db: Literal["clickhouse", "postgres", "vertica"],
+) -> list[tuple[Any, ...]]:
     if db == "clickhouse":
         return conn.execute(QUERY[db])
 
     cur = conn.cursor()
     cur.execute(QUERY[db])
     return cur.fetchall()
+
 
 def make_rows(n: int, seed: int | None = None):
     if seed is None:
@@ -122,7 +128,7 @@ def make_rows(n: int, seed: int | None = None):
         )
 
     return rows
-    
+
 
 def insert_rows(conn: Any, db: str, rows) -> None:
     if not rows:
@@ -178,4 +184,3 @@ def insert_rows(conn: Any, db: str, rows) -> None:
         return
 
     raise ValueError(f"Unsupported db: {db}")
-  
