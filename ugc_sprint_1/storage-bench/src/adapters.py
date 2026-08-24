@@ -60,7 +60,9 @@ QUERY = {
 }
 
 
-def connect(db: Literal["clickhouse", "postgres", "vertica"]) -> Client | PgConnection | Connection:
+def connect(
+    db: Literal["clickhouse", "postgres", "vertica"],
+) -> Client | PgConnection | Connection:
     if db == "clickhouse":
         return Client(**CLICKHOUSE)
 
