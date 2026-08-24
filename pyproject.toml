@@ -1,0 +1,43 @@
+[project]
+name = "my-awesome-project"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+# Настройки Ruff (Линтер и форматтер)
+[tool.ruff]
+# Длина строки (стандарт Black/Ruff)
+line-length = 88
+# Целевая версия Python
+target-version = "py312"
+
+[tool.ruff.lint]
+# Включаемые правила:
+# E, W - pycodestyle (ошибки и предупреждения)
+# F - pyflakes (ошибки кода)
+# I - isort (сортировка импортов)
+# UP - pyupgrade (обновление синтаксиса до новых версий Python)
+# B - flake8-bugbear (поиск частых багов)
+# C4 - flake8-comprehensions (оптимизация генераторов)
+select = ["E", "W", "F", "I", "UP", "B", "C4"]
+
+# Игнорируемые правила (если потребуется)
+ignore = []
+
+# Разрешаем автофикс при запуске ruff check --fix
+fixable = ["ALL"]
+
+[tool.ruff.format]
+# Используем двойные кавычки для строк
+quote-style = "double"
+# Используем LF для переноса строк
+line-ending = "lf"
+
+# Настройки Mypy (Проверка типов)
+[tool.mypy]
+python_version = "3.12"
+# Строгий режим проверки (требует явных аннотаций типов)
+strict = true
+# Игнорировать отсутствие типов в сторонних библиотеках
+ignore_missing_imports = true
+# Показывать коды ошибок для удобного игнорирования
+show_error_codes = true
