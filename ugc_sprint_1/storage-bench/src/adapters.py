@@ -7,7 +7,6 @@ import psycopg2
 import psycopg2.extras
 import vertica_python
 from clickhouse_driver import Client
-
 from config import CLICKHOUSE, POSTGRES_DSN, VERTICA
 
 EVENT_TYPES = ["view", "click", "purchase", "refund", "login"]
@@ -177,4 +176,3 @@ def insert_rows(conn, db: str, rows):
         return
 
     raise ValueError(f"Unsupported db: {db}")
-  
