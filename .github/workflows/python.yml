@@ -41,7 +41,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install ruff mypy pytest
-          # Если у вас есть requirements.txt или poetry/uv, установите их здесь:
           # pip install -r requirements.txt 
 
       - name: Lint with Ruff
@@ -55,7 +54,7 @@ jobs:
 
       - name: Run tests with pytest
         run: pytest || true
-        # Если тестов пока нет, закомментируйте этот шаг или добавьте `|| true`
+
   # Задача 5: Отправка уведомления в Telegram
   notify-telegram:
     name: Notify Telegram
@@ -64,6 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     # Дополнительная страховка: запускаем только при успехе
     # if: success() 
+    # Заглушка при отсутствии Телеграм, чтобы не падал тест.
     if: false
 
     steps:
